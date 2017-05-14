@@ -20,7 +20,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
-    Button button;
+    //Button button;
     String TAG = "chirag";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +33,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         textView = (TextView) findViewById(R.id.text);
-        button = (Button) findViewById(R.id.button);
-        button.setText("start");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                textView.setText("");
+        //button = (Button) findViewById(R.id.button);
+        //button.setText("start");
+       // button.setOnClickListener(new View.OnClickListener() {
+         //   @Override
+           // public void onClick(View view) {
+             //   textView.setText("");
                 speechInput();
-            }
-        });
+            //}
+       // });
     }
 
     @Override
@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    int count = 0;
     private void speechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 "com.domain.app");
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
 
-        SpeechRecognizer recognizer = SpeechRecognizer
+        final SpeechRecognizer recognizer = SpeechRecognizer
                 .createSpeechRecognizer(this.getApplicationContext());
         RecognitionListener listener = new RecognitionListener() {
             @Override
@@ -115,26 +116,31 @@ public class MainActivity extends AppCompatActivity {
                     for (String match : voiceResults) {
                         Log.d(TAG, match);
                     }
+                    if(voiceResults.get(0).toLowerCase().contains("hello")) {
+                        count++;
+                        textView.setText("hotword detected " + count);
+                    }
                 }
+                speechInput();
             }
 
             @Override
             public void onReadyForSpeech(Bundle params) {
                 Log.d(TAG, "Ready for speech");
-                button.setText("Speak");
+                //button.setText("Speak");
             }
 
             @Override
             public void onError(int error) {
                 Log.d(TAG,
                         "Error listening for speech: " + error);
-                button.setText("Error");
+                speechInput();
             }
 
             @Override
             public void onBeginningOfSpeech() {
                 Log.d(TAG, "Speech starting");
-                button.setText("Speak");
+                //button.setText("Speak");
             }
 
             @Override
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEndOfSpeech() {
                 // TODO Auto-generated method stub
-                button.setText("start");
+                //button.setText("start");
             }
 
             @Override
@@ -158,9 +164,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPartialResults(Bundle partialResults) {
                 // TODO Auto-generated method stub
-                ArrayList<String> partial = partialResults
-                        .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                textView.setText(partial.get(0));
             }
 
             @Override
